@@ -10,9 +10,11 @@ import { Plane, Map, Activity, FileText } from 'lucide-react';
 function App() {
     const { currentView, setCurrentView } = useStore();
 
+    // WebSocket is automatically connected via the hook
+    useWebSocket();
+
     useEffect(() => {
-        // WebSocket is automatically connected via the hook
-        useWebSocket();
+        // Component mounted
     }, []);
 
     const renderView = () => {
