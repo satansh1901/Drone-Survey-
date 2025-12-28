@@ -1,0 +1,137 @@
+// Prisma schema for Drone Survey Management System
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Drone model - represents individual drones in the fleet
+model Drone {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  model       String
+  status      DroneStatus @default(AVAILABLE)
+  battery     Float    @default(100.0) // Battery percentage (0-100)
+  latitude    Float?   // Current latitude
+  longitude   Float?   // Current longitude
+  altitude    Float?   // Current altitude in meters
+  speed       Float    @default(10.0) // Speed in m/s
+  maxSpeed    Float    @default(15.0) // Max speed in m/s
+  maxAltitude Float    @default(120.0) // Max altitude in meters
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  missions    Mission[]
+  
+  @@index([status])
+}
+
+enum DroneStatus {
+  AVAILABLE
+  IN_MISSION
+  CHARGING
+  MAINTENANCE
+  OFFLINE
+}
+
+// Mission model - represents survey missions
+model Mission {
+  id              String        @id @default(uuid())
+  name            String
+  droneId         String
+  drone           Drone         @relation(fields: [droneId], references: [id], onDelete: Cascade)
+  status          MissionStatus @default(PLANNED)
+  
+  // Survey area as GeoJSON polygon (stored as JSON)
+  surveyArea      Json
+  
+  // Flight path configuration
+  pathPattern     PathPattern   @default(GRID)
+  altitude        Float         // Flight altitude in meters
+  speed           Float         @default(10.0) // Flight speed in m/s
+  overlapPercent  Float         @default(70.0) // Image overlap percentage
+  
+  // Mission progress
+  progress        Float         @default(0.0) // Percentage (0-100)
+  currentWaypoint Int           @default(0)
+  totalWaypoints  Int           @default(0)
+  
+  // Mission statistics
+  startTime       DateTime?
+  endTime         DateTime?
+  estimatedTime   Float?        // Estimated duration in seconds
+  actualTime      Float?        // Actual duration in seconds
+  distanceCovered Float         @default(0.0) // Distance in meters
+  areaCovered     Float         @default(0.0) // Area in square meters
+  
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  
+  waypoints       Waypoint[]
+  surveyReport    SurveyReport?
+  
+  @@index([droneId])
+  @@index([status])
+}
+
+enum MissionStatus {
+  PLANNED
+  ACTIVE
+  PAUSED
+  COMPLETED
+  ABORTED
+  FAILED
+}
+
+enum PathPattern {
+  GRID
+  PERIMETER
+  CROSSHATCH
+}
+
+// Waypoint model - individual points in the flight path
+model Waypoint {
+  id          String   @id @default(uuid())
+  missionId   String
+  mission     Mission  @relation(fields: [missionId], references: [id], onDelete: Cascade)
+  sequence    Int      // Order in the flight path
+  latitude    Float
+  longitude   Float
+  altitude    Float
+  reached     Boolean  @default(false)
+  reachedAt   DateTime?
+  
+  @@unique([missionId, sequence])
+  @@index([missionId])
+}
+
+// Survey Report model - generated after mission completion
+model SurveyReport {
+  id              String   @id @default(uuid())
+  missionId       String   @unique
+  mission         Mission  @relation(fields: [missionId], references: [id], onDelete: Cascade)
+  
+  // Mission summary
+  duration        Float    // Total duration in seconds
+  distance        Float    // Total distance in meters
+  coverage        Float    // Coverage area in square meters
+  waypointsTotal  Int
+  waypointsReached Int
+  
+  // Performance metrics
+  avgSpeed        Float
+  maxSpeed        Float
+  avgAltitude     Float
+  batteryUsed     Float    // Battery consumed (percentage)
+  
+  // Additional metadata
+  metadata        Json?    // Additional custom metrics
+  
+  createdAt       DateTime @default(now())
+  
+  @@index([missionId])
+}

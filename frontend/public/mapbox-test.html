@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Mapbox Test</title>
+    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+    <link href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet">
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        #map {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 100%;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="map"></div>
+    <script>
+        mapboxgl.accessToken = 'pk.eyJ1Ijoic2F0eWVuZHJhOTU4MCIsImEiOiJjbWJkcTB1bjExeWNvMm1wOWM2bDI0Z2lqIn0.cKg7f1-f7-K8OtWVifoK8A';
+
+        const map = new mapboxgl.Map({
+            container: 'map',
+            style: 'mapbox://styles/mapbox/dark-v11',
+            center: [77.5946, 12.9716],
+            zoom: 11
+        });
+
+        map.on('load', () => {
+            console.log('Map loaded successfully!');
+
+            // Add test markers for the drones
+            const drones = [
+                { name: 'Apollo', lat: 12.96964372754992, lng: 77.61097741753262 },
+                { name: 'AlphaFleetlevel23', lat: 12.96723669077433, lng: 77.61283470412003 },
+                { name: 'AlphaFleet', lat: 12.99576680796604, lng: 77.55814524902614 }
+            ];
+
+            drones.forEach(drone => {
+                const el = document.createElement('div');
+                el.style.width = '40px';
+                el.style.height = '40px';
+                el.style.borderRadius = '50%';
+                el.style.backgroundColor = '#10b981';
+                el.style.border = '4px solid white';
+                el.style.boxShadow = '0 0 15px rgba(0,0,0,0.8)';
+
+                new mapboxgl.Marker({ element: el })
+                    .setLngLat([drone.lng, drone.lat])
+                    .setPopup(new mapboxgl.Popup().setHTML(`<h3>${drone.name}</h3>`))
+                    .addTo(map);
+
+                console.log(`Added marker for ${drone.name}`);
+            });
+        });
+    </script>
+</body>
+
+</html>

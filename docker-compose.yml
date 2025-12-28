@@ -1,0 +1,77 @@
+version: '3.8'
+
+services:
+  # PostgreSQL with PostGIS extension (optional for local development)
+  postgres:
+    image: postgis/postgis:15-3.3
+    container_name: drone-survey-postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: drone_survey_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis for caching and job queue (optional for local development)
+  redis:
+    image: redis:7-alpine
+    container_name: drone-survey-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Backend API
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: drone-survey-backend
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/drone_survey_db
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      BACKEND_PORT: 3001
+      NODE_ENV: production
+      CORS_ORIGIN: http://localhost:3000
+      JWT_SECRET: change-this-to-a-secure-secret-key
+    ports:
+      - "3001:3001"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    command: >
+      sh -c "npx prisma migrate deploy && npm start"
+
+  # Frontend
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        VITE_MAPBOX_ACCESS_TOKEN: ${VITE_MAPBOX_ACCESS_TOKEN}
+        VITE_API_URL: http://localhost:3001/api
+        VITE_WS_URL: http://localhost:3001
+    container_name: drone-survey-frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:
+  redis_data:
