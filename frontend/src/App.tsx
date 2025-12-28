@@ -9,10 +9,10 @@ import { Plane, Map, Activity, FileText } from 'lucide-react';
 
 function App() {
     const { currentView, setCurrentView } = useStore();
-    const ws = useWebSocket();
 
     useEffect(() => {
         // WebSocket is automatically connected via the hook
+        useWebSocket();
     }, []);
 
     const renderView = () => {
@@ -95,8 +95,8 @@ const NavButton: React.FC<{
     <button
         onClick={onClick}
         className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${active
-                ? 'bg-blue-600 text-white shadow-lg'
-                : 'text-slate-400 hover:bg-slate-700 hover:text-white'
+            ? 'bg-blue-600 text-white shadow-lg'
+            : 'text-slate-400 hover:bg-slate-700 hover:text-white'
             }`}
     >
         {icon}

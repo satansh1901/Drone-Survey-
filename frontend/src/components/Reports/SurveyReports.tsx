@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { surveyAPI, SurveyReport } from '../../services/api';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { FileText, TrendingUp, Clock, MapPin, Plane } from 'lucide-react';
+import { FileText, TrendingUp, Clock, MapPin } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 
 export const SurveyReports: React.FC = () => {

@@ -42,7 +42,7 @@ export const MissionPlanner: React.FC = () => {
         }
 
         try {
-            const response = await missionAPI.create({
+            await missionAPI.create({
                 ...formData,
                 surveyArea,
             });
@@ -257,8 +257,8 @@ const PatternButton: React.FC<{
         type="button"
         onClick={onClick}
         className={`flex flex-col items-center gap-1 p-3 rounded-lg border-2 transition-all ${active
-                ? 'border-blue-500 bg-blue-500/20 text-blue-400'
-                : 'border-slate-600 bg-slate-700 text-slate-400 hover:border-slate-500'
+            ? 'border-blue-500 bg-blue-500/20 text-blue-400'
+            : 'border-slate-600 bg-slate-700 text-slate-400 hover:border-slate-500'
             }`}
     >
         {icon}

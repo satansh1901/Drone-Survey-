@@ -72,7 +72,7 @@ export const MissionMonitor: React.FC = () => {
     });
 
     // Listen for mission status updates
-    useWebSocketEvent('mission:status', (data: any) => {
+    useWebSocketEvent('mission:status', () => {
         loadMissions();
     });
 

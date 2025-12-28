@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useStore } from '../../store/useStore';
-import { fleetAPI, Drone } from '../../services/api';
+import { fleetAPI } from '../../services/api';
 import { useWebSocketEvent } from '../../hooks/useWebSocket';
-import { Plane, Battery, Activity, Plus, Trash2, Edit } from 'lucide-react';
+import { Plane, Battery, Plus, Trash2 } from 'lucide-react';
 
 export const FleetDashboard: React.FC = () => {
-    const { drones, setDrones, updateDrone, fetchDrones } = useStore();
+    const { drones, updateDrone, fetchDrones } = useStore();
     const [showAddModal, setShowAddModal] = useState(false);
     const [fleetStats, setFleetStats] = useState<any>(null);
 

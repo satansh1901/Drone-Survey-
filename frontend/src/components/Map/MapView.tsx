@@ -15,7 +15,6 @@ interface MapViewProps {
 
 export const MapView: React.FC<MapViewProps> = ({
     drones = [],
-    missions = [],
     onPolygonDrawn,
     drawMode = false,
     selectedMission,
@@ -65,11 +64,14 @@ export const MapView: React.FC<MapViewProps> = ({
             map.current!.addControl(draw.current as any, 'top-left');
 
             // Handle polygon creation
-            map.current!.on('draw.create', (e: any) => {
+            map.current!.on('draw.create', () => {
                 const data = draw.current!.getAll();
                 if (data.features.length > 0) {
-                    const coords = data.features[0].geometry.coordinates[0];
-                    onPolygonDrawn?.(coords);
+                    const feature = data.features[0];
+                    if (feature.geometry.type === 'Polygon') {
+                        const coords = feature.geometry.coordinates[0];
+                        onPolygonDrawn?.(coords);
+                    }
                 }
             });
         });

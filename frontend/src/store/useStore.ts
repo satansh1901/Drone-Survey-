@@ -25,7 +25,7 @@ interface AppState {
     setCurrentView: (view: 'fleet' | 'planning' | 'monitoring' | 'reports') => void;
 }
 
-export const useStore = create<AppState>((set, get) => ({
+export const useStore = create<AppState>((set) => ({
     // Drones
     drones: [],
     selectedDrone: null,
