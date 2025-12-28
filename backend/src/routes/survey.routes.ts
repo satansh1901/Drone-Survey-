@@ -20,7 +20,7 @@ export async function surveyRoutes(fastify: FastifyInstance) {
     });
 
     // Get all survey reports
-    fastify.get('/surveys', async (request, reply) => {
+    fastify.get('/surveys', async (_request, reply) => {
         try {
             const reports = await surveyService.getAllSurveyReports();
             return reply.send({ success: true, data: reports });
@@ -30,7 +30,7 @@ export async function surveyRoutes(fastify: FastifyInstance) {
     });
 
     // Get organization-wide statistics
-    fastify.get('/surveys/stats/organization', async (request, reply) => {
+    fastify.get('/surveys/stats/organization', async (_request, reply) => {
         try {
             const stats = await surveyService.getOrganizationStats();
             return reply.send({ success: true, data: stats });

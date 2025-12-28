@@ -63,7 +63,7 @@ export function generateGridPattern(
     polygon: number[][],
     altitude: number,
     spacing: number = 50,
-    angle: number = 0
+    _angle: number = 0
 ): Array<[number, number, number]> {
     const coords = [...polygon];
     if (
@@ -145,7 +145,7 @@ export function generatePerimeterPattern(
 
     // Get coordinates and add altitude
     const perimeterCoords = turf.getCoords(finalPolygon)[0];
-    return perimeterCoords.map(coord => [coord[0], coord[1], altitude]);
+    return perimeterCoords.map((coord: number[]) => [coord[0], coord[1], altitude]);
 }
 
 /**

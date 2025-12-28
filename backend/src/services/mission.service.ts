@@ -1,4 +1,4 @@
-import { PrismaClient, Mission, MissionStatus, PathPattern, Drone, DroneStatus } from '@prisma/client';
+import { PrismaClient, Mission, MissionStatus, PathPattern, DroneStatus } from '@prisma/client';
 import { cacheHelper, cacheKeys } from '../utils/redis';
 import { emitMissionStatus } from '../utils/websocket';
 import {
@@ -53,7 +53,7 @@ export class MissionService {
         }
 
         // Calculate mission statistics
-        const area = calculateArea(input.surveyArea);
+        calculateArea(input.surveyArea); // Calculate but don't store
         const estimatedTime = calculateMissionTime(waypoints, input.speed || drone.speed);
 
         // Create mission

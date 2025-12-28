@@ -94,7 +94,7 @@ export async function fleetRoutes(fastify: FastifyInstance) {
     });
 
     // Get fleet statistics
-    fastify.get('/fleet/stats/overview', async (request, reply) => {
+    fastify.get('/fleet/stats/overview', async (_request, reply) => {
         try {
             const stats = await fleetService.getFleetStatistics();
             return reply.send({ success: true, data: stats });

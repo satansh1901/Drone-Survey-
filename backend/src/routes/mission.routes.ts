@@ -129,7 +129,7 @@ export async function missionRoutes(fastify: FastifyInstance) {
     });
 
     // Get active missions
-    fastify.get('/missions/active/list', async (request, reply) => {
+    fastify.get('/missions/active/list', async (_request, reply) => {
         try {
             const missions = await missionService.getActiveMissions();
             return reply.send({ success: true, data: missions });
